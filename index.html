@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>身份保护实体(IPE)系统扩展版</title>
+    <meta name="description" content="核心团队成员网络身份安全评估与规划系统">
+    
+    <!-- 外部依赖 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ant-design/icons@4.7.0/lib/index.css">
+    
+    <!-- 自定义样式 -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/ant-design.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <!-- 顶部标题栏 -->
+    <header class="security-header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="system-title">身份保护实体(IPE)系统扩展版</h1>
+                <p class="system-subtitle">核心团队成员网络身份安全评估与规划系统</p>
+            </div>
+            <div class="header-right">
+                <p class="version-info">版本 2025.07 | 基于GB/T 9385-2008规范</p>
+                <div class="data-status" id="data-status">数据状态: 正常</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <div class="dashboard-layout">
+        <!-- 左侧风险驾驶舱 -->
+        <section class="risk-cockpit">
+            <div class="cockpit-header">
+                <h2>风险驾驶舱</h2>
+                <div class="cockpit-actions">
+                    <button class="btn-reset" onclick="resetAllData()">重置数据</button>
+                </div>
+            </div>
+            
+            <!-- KPI指标卡片 -->
+            <div class="kpi-container">
+                <div class="kpi-card kpi-high">
+                    <div class="kpi-icon">🔴</div>
+                    <div class="kpi-content">
+                        <h3>高风险事件</h3>
+                        <div class="kpi-value" id="high-risk-value">0</div>
+                        <div class="kpi-desc">24小时内发生</div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card kpi-medium">
+                    <div class="kpi-icon">🟡</div>
+                    <div class="kpi-content">
+                        <h3>中风险事件</h3>
+                        <div class="kpi-value" id="medium-risk-value">0</div>
+                        <div class="kpi-desc">24小时内发生</div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card kpi-low">
+                    <div class="kpi-icon">🟢</div>
+                    <div class="kpi-content">
+                        <h3>低风险事件</h3>
+                        <div class="kpi-value" id="low-risk-value">0</div>
+                        <div class="kpi-desc">24小时内发生</div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card kpi-trend">
+                    <div class="kpi-icon">📈</div>
+                    <div class="kpi-content">
+                        <h3>风险趋势</h3>
+                        <div class="kpi-value">+<span id="risk-trend-value">0</span>%</div>
+                        <div class="kpi-desc">周环比变化率</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 图表容器 -->
+            <div class="chart-container">
+                <div class="chart-item">
+                    <h3>风险分布</h3>
+                    <canvas id="pie-chart"></canvas>
+                </div>
+                <div class="chart-item">
+                    <h3>7天趋势分析</h3>
+                    <canvas id="line-chart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 右侧数据表格 -->
+        <section class="data-control-panel">
+            <div class="panel-header">
+                <h2>数据配置</h2>
+            </div>
+            
+            <!-- 标签页 -->
+            <div class="ant-tabs">
+                <div class="tab-nav">
+                    <button class="tab-link active" onclick="openTab(event, 'alarm-records')">告警记录</button>
+                    <button class="tab-link" onclick="openTab(event, 'user-identities')">用户身份</button>
+                    <button class="tab-link" onclick="openTab(event, 'base-assets')">基线资产</button>
+                    <button class="tab-link" onclick="openTab(event, 'risk-rules')">风险规则</button>
+                </div>
+                
+                <!-- 告警记录表格 -->
+                <div id="alarm-records" class="tab-content active">
+                    <div class="table-header">
+                        <h3>告警记录管理</h3>
+                        <button class="btn-add" onclick="addAlarmRecord()">添加记录</button>
+                    </div>
+                    <div class="ant-table">
+                        <div class="ant-table-header">
+                            <div class="ant-row">
+                                <div class="ant-col">风险等级</div>
+                                <div class="ant-col">通知渠道</div>
+                                <div class="ant-col">发送状态</div>
+                                <div class="ant-col">发生时间</div>
+                                <div class="ant-col">操作</div>
+                            </div>
+                        </div>
+                        <div class="ant-table-body" id="alarm-table-body">
+                            <!-- 动态表格内容 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 用户身份表格 -->
+                <div id="user-identities" class="tab-content">
+                    <div class="table-header">
+                        <h3>用户身份管理</h3>
+                        <button class="btn-add" onclick="addUserIdentity()">添加用户</button>
+                    </div>
+                    <div class="ant-table">
+                        <div class="ant-table-header">
+                            <div class="ant-row">
+                                <div class="ant-col">姓名</div>
+                                <div class="ant-col">身份证号</div>
+                                <div class="ant-col">有效期</div>
+                                <div class="ant-col">状态</div>
+                                <div class="ant-col">操作</div>
+                            </div>
+                        </div>
+                        <div class="ant-table-body" id="user-table-body">
+                            <!-- 动态表格内容 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 基线资产表格 -->
+                <div id="base-assets" class="tab-content">
+                    <div class="table-header">
+                        <h3>基线资产管理</h3>
+                        <button class="btn-add" onclick="addBaseAsset()">添加资产</button>
+                    </div>
+                    <div class="ant-table">
+                        <div class="ant-table-header">
+                            <div class="ant-row">
+                                <div class="ant-col">资产ID</div>
+                                <div class="ant-col">类型</div>
+                                <div class="ant-col">加密账户号</div>
+                                <div class="ant-col">快照时间</div>
+                                <div class="ant-col">操作</div>
+                            </div>
+                        </div>
+                        <div class="ant-table-body" id="asset-table-body">
+                            <!-- 动态表格内容 -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 风险规则表格 -->
+                <div id="risk-rules" class="tab-content">
+                    <div class="table-header">
+                        <h3>风险规则配置</h3>
+                        <button class="btn-add" onclick="addRiskRule()">添加规则</button>
+                    </div>
+                    <div class="ant-table">
+                        <div class="ant-table-header">
+                            <div class="ant-row">
+                                <div class="ant-col">规则ID</div>
+                                <div class="ant-col">扫描条件</div>
+                                <div class="ant-col">比对算法</div>
+                                <div class="ant-col">告警阈值</div>
+                                <div class="ant-col">操作</div>
+                            </div>
+                        </div>
+                        <div class="ant-table-body" id="rule-table-body">
+                            <!-- 动态表格内容 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- JavaScript文件 -->
+    <script src="js/data-storage.js"></script>
+    <script src="js/risk-engine.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/table.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 

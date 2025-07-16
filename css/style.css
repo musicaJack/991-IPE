@@ -1,0 +1,340 @@
+/* ===== 全局样式 ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #001529;
+    color: #ffffff;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* ===== 顶部标题栏 ===== */
+.security-header {
+    background: linear-gradient(135deg, #002140 0%, #001529 100%);
+    border-bottom: 1px solid #1890ff;
+    padding: 16px 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.header-left .system-title {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.header-left .system-subtitle {
+    font-size: 14px;
+    color: #8c8c8c;
+    margin: 0;
+}
+
+.header-right {
+    text-align: right;
+}
+
+.version-info {
+    font-size: 12px;
+    color: #8c8c8c;
+    margin-bottom: 4px;
+}
+
+.data-status {
+    font-size: 12px;
+    color: #52c41a;
+    font-weight: 500;
+}
+
+/* ===== 主布局 ===== */
+.dashboard-layout {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
+    gap: 24px;
+    min-height: calc(100vh - 100px);
+}
+
+/* 左侧风险驾驶舱 */
+.risk-cockpit {
+    flex: 1;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #1890ff;
+}
+
+.cockpit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.cockpit-header h2 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    color: #262626;
+    margin: 0;
+}
+
+.btn-reset {
+    background: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.btn-reset:hover {
+    background: #ff7875;
+    transform: translateY(-1px);
+}
+
+/* ===== KPI卡片 ===== */
+.kpi-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.kpi-card {
+    background: #fafafa;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: #1890ff;
+}
+
+.kpi-card.kpi-high::before {
+    background: #ff4d4f;
+}
+
+.kpi-card.kpi-medium::before {
+    background: #faad14;
+}
+
+.kpi-card.kpi-low::before {
+    background: #52c41a;
+}
+
+.kpi-card.kpi-trend::before {
+    background: #722ed1;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.kpi-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.kpi-content h3 {
+    font-size: 14px;
+    color: #8c8c8c;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.kpi-value {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: #262626;
+    margin-bottom: 4px;
+}
+
+.kpi-desc {
+    font-size: 12px;
+    color: #8c8c8c;
+}
+
+/* ===== 图表容器 ===== */
+.chart-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.chart-item {
+    background: #fafafa;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.chart-item h3 {
+    font-size: 16px;
+    color: #262626;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.chart-item canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ===== 右侧数据面板 ===== */
+.data-control-panel {
+    flex: 1;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #1890ff;
+}
+
+.panel-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.panel-header h2 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    color: #262626;
+    margin: 0;
+}
+
+/* ===== 表格头部 ===== */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.table-header h3 {
+    font-size: 16px;
+    color: #262626;
+    font-weight: 600;
+    margin: 0;
+}
+
+.btn-add {
+    background: #1890ff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.btn-add:hover {
+    background: #40a9ff;
+    transform: translateY(-1px);
+}
+
+/* ===== 响应式设计 ===== */
+@media (max-width: 1200px) {
+    .dashboard-layout {
+        flex-direction: column;
+    }
+    
+    .kpi-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .chart-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+    
+    .dashboard-layout {
+        padding: 16px;
+    }
+    
+    .kpi-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .cockpit-header {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+}
+
+/* ===== 动画效果 ===== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.kpi-card, .chart-item {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* ===== 滚动条样式 ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+} 

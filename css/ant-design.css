@@ -1,0 +1,422 @@
+/* ===== Ant Design 风格样式 ===== */
+
+/* ===== 标签页样式 ===== */
+.ant-tabs {
+    width: 100%;
+}
+
+.tab-nav {
+    display: flex;
+    border-bottom: 1px solid #d9d9d9;
+    margin-bottom: 16px;
+    background: #fafafa;
+    border-radius: 6px 6px 0 0;
+}
+
+.tab-link {
+    background: none;
+    border: none;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #8c8c8c;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tab-link:hover {
+    color: #1890ff;
+    background: #e6f7ff;
+}
+
+.tab-link.active {
+    color: #1890ff;
+    border-bottom-color: #1890ff;
+    background: #ffffff;
+}
+
+.tab-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #1890ff;
+}
+
+/* ===== 标签页内容 ===== */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ===== Ant Design 表格样式 ===== */
+.ant-table {
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.ant-table-header {
+    background: #fafafa;
+    border-bottom: 1px solid #d9d9d9;
+}
+
+.ant-table-header .ant-row {
+    display: flex;
+    background: #fafafa;
+    border-bottom: 1px solid #d9d9d9;
+}
+
+.ant-table-header .ant-col {
+    padding: 12px 16px;
+    font-weight: 600;
+    color: #262626;
+    font-size: 14px;
+    border-right: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.ant-table-header .ant-col:last-child {
+    border-right: none;
+}
+
+.ant-table-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.ant-table-body .ant-row {
+    display: flex;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.ant-table-body .ant-row:hover {
+    background: #f5f5f5;
+}
+
+.ant-table-body .ant-row:last-child {
+    border-bottom: none;
+}
+
+.ant-table-body .ant-col {
+    padding: 12px 16px;
+    color: #262626;
+    font-size: 14px;
+    border-right: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 48px;
+}
+
+.ant-table-body .ant-col:last-child {
+    border-right: none;
+}
+
+/* ===== 表格输入框样式 ===== */
+.ant-table input,
+.ant-table select {
+    width: 100%;
+    padding: 6px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: #ffffff;
+}
+
+.ant-table input:focus,
+.ant-table select:focus {
+    outline: none;
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.ant-table input:hover,
+.ant-table select:hover {
+    border-color: #40a9ff;
+}
+
+/* ===== 表格按钮样式 ===== */
+.table-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-right: 4px;
+    transition: all 0.3s ease;
+}
+
+.btn-save {
+    background: #52c41a;
+    color: white;
+}
+
+.btn-save:hover {
+    background: #73d13d;
+}
+
+.btn-edit {
+    background: #1890ff;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #40a9ff;
+}
+
+.btn-delete {
+    background: #ff4d4f;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #ff7875;
+}
+
+.btn-cancel {
+    background: #8c8c8c;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #bfbfbf;
+}
+
+/* ===== 空表格状态 ===== */
+.empty-table {
+    text-align: center;
+    padding: 40px 20px;
+    color: #8c8c8c;
+}
+
+.empty-table .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+}
+
+.empty-table .empty-text {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.empty-table .empty-description {
+    font-size: 12px;
+    color: #bfbfbf;
+}
+
+/* ===== 表格加载状态 ===== */
+.table-loading {
+    text-align: center;
+    padding: 40px 20px;
+    color: #8c8c8c;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #1890ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ===== 表格行编辑状态 ===== */
+.ant-row.editing {
+    background: #e6f7ff !important;
+    border: 1px solid #91d5ff;
+}
+
+.ant-row.editing .ant-col {
+    background: #e6f7ff;
+}
+
+/* ===== 表格验证状态 ===== */
+.ant-table input.error {
+    border-color: #ff4d4f;
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
+}
+
+.ant-table input.success {
+    border-color: #52c41a;
+    box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
+}
+
+/* ===== 表格操作列 ===== */
+.actions-col {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.actions-col .table-btn {
+    flex: 1;
+    min-width: 60px;
+    text-align: center;
+}
+
+/* ===== 表格分页样式 ===== */
+.ant-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+    padding: 16px 0;
+    border-top: 1px solid #f0f0f0;
+}
+
+.pagination-info {
+    font-size: 14px;
+    color: #8c8c8c;
+    margin-right: 16px;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.pagination-btn {
+    padding: 6px 12px;
+    border: 1px solid #d9d9d9;
+    background: #ffffff;
+    color: #262626;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.pagination-btn:hover {
+    border-color: #1890ff;
+    color: #1890ff;
+}
+
+.pagination-btn.active {
+    background: #1890ff;
+    border-color: #1890ff;
+    color: #ffffff;
+}
+
+.pagination-btn:disabled {
+    background: #f5f5f5;
+    border-color: #d9d9d9;
+    color: #bfbfbf;
+    cursor: not-allowed;
+}
+
+/* ===== 表格筛选和排序 ===== */
+.table-filter {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: #fafafa;
+    border-radius: 6px;
+    border: 1px solid #d9d9d9;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filter-item label {
+    font-size: 12px;
+    color: #8c8c8c;
+    font-weight: 500;
+}
+
+.filter-item input,
+.filter-item select {
+    padding: 6px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+.filter-btn {
+    padding: 6px 12px;
+    border: 1px solid #d9d9d9;
+    background: #ffffff;
+    color: #262626;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    border-color: #1890ff;
+    color: #1890ff;
+}
+
+.filter-btn.primary {
+    background: #1890ff;
+    border-color: #1890ff;
+    color: #ffffff;
+}
+
+.filter-btn.primary:hover {
+    background: #40a9ff;
+    border-color: #40a9ff;
+}
+
+/* ===== 响应式表格 ===== */
+@media (max-width: 768px) {
+    .ant-table-header .ant-row,
+    .ant-table-body .ant-row {
+        flex-direction: column;
+    }
+    
+    .ant-table-header .ant-col,
+    .ant-table-body .ant-col {
+        border-right: none;
+        border-bottom: 1px solid #f0f0f0;
+        width: 100%;
+    }
+    
+    .ant-table-header .ant-col:last-child,
+    .ant-table-body .ant-col:last-child {
+        border-bottom: none;
+    }
+    
+    .tab-nav {
+        flex-wrap: wrap;
+    }
+    
+    .tab-link {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+    }
+} 
