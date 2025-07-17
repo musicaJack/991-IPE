@@ -1,20 +1,16 @@
-/**
- * 主模块
- * 负责应用初始化和全局功能
- */
+// 主应用模块
+class IPEApp {
+    constructor() {
+        this.dashboard = null;
+        this.tableManager = null;
+        this.init();
+    }
 
-/**
- * 应用主控制器
- */
-const AppController = {
-    /**
-     * 初始化应用
-     */
-    init: function() {
-        console.log('=== IPE系统初始化开始 ===');
+    init() {
+        console.log('初始化IPE系统...');
         
-        // 检查依赖
-        this.checkDependencies();
+        // 初始化数据存储
+        this.initDataStorage();
         
         // 初始化各个模块
         this.initModules();
@@ -22,449 +18,260 @@ const AppController = {
         // 绑定全局事件
         this.bindGlobalEvents();
         
-        // 生成初始模拟数据（可选）
-        this.generateInitialData();
+        // 检查是否需要自动刷新
+        if (localStorage.getItem('autoRefresh') === 'true') {
+            this.startAutoRefresh();
+        }
         
-        console.log('=== IPE系统初始化完成 ===');
-    },
+        // 应用保存的主题
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        this.applyTheme(savedTheme);
+        
+        console.log('IPE系统初始化完成');
+    }
 
-    /**
-     * 检查依赖
-     */
-    checkDependencies: function() {
-        // 检查Chart.js
-        if (typeof Chart === 'undefined') {
-            console.error('Chart.js 未加载，请检查网络连接');
-            this.showError('Chart.js 库加载失败，请刷新页面重试');
-            return false;
+    // 初始化数据存储
+    initDataStorage() {
+        // 创建DataStorage实例
+        if (window.DataStorage) {
+            window.dataStorage = new window.DataStorage();
+            console.log('DataStorage实例创建成功');
+        } else {
+            console.error('DataStorage类未找到');
         }
+    }
 
-        // 检查localStorage
-        if (typeof localStorage === 'undefined') {
-            console.error('浏览器不支持localStorage');
-            this.showError('浏览器不支持本地存储，部分功能可能无法使用');
-            return false;
-        }
 
-        console.log('依赖检查通过');
-        return true;
-    },
 
-    /**
-     * 初始化各个模块
-     */
-    initModules: function() {
-        try {
-            // 数据存储模块已在data-storage.js中自动初始化
+    // 初始化各个模块
+    initModules() {
+        // 初始化表格管理器
+        this.tableManager = new TableManager();
+        
+        // 初始化风险引擎
+        this.riskEngine = new RiskEngine();
+        
+        // 延迟初始化仪表板，确保DOM元素已准备好
+        setTimeout(() => {
+            this.dashboard = new Dashboard();
+            console.log('Dashboard模块初始化完成');
             
-            // 初始化风险引擎
-            if (typeof riskEngine !== 'undefined') {
-                console.log('风险引擎初始化完成');
-            } else {
-                console.error('风险引擎初始化失败');
+            // 确保Dashboard正确更新
+            if (this.dashboard) {
+                this.dashboard.updateMetrics();
+                this.dashboard.updateDonutChart();
+                setTimeout(() => {
+                    this.dashboard.initTrendChart();
+                }, 200);
             }
+        }, 200);
+    }
 
-            // 初始化驾驶舱
-            if (typeof DashboardManager !== 'undefined') {
-                DashboardManager.init();
-                console.log('驾驶舱初始化完成');
-            } else {
-                console.error('驾驶舱初始化失败');
-            }
-
-            // 初始化表格管理器
-            if (typeof TableManager !== 'undefined') {
-                TableManager.init();
-                console.log('表格管理器初始化完成');
-            } else {
-                console.error('表格管理器初始化失败');
-            }
-
-        } catch (error) {
-            console.error('模块初始化失败:', error);
-            this.showError('系统初始化失败，请刷新页面重试');
-        }
-    },
-
-    /**
-     * 绑定全局事件
-     */
-    bindGlobalEvents: function() {
-        // 窗口大小变化事件
-        window.addEventListener('resize', this.debounce(() => {
-            this.handleResize();
-        }, 250));
-
-        // 页面可见性变化事件
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                this.handlePageVisible();
+    // 绑定全局事件
+    bindGlobalEvents() {
+        // 窗口大小变化时重新渲染图表
+        window.addEventListener('resize', () => {
+            if (this.dashboard) {
+                this.dashboard.renderTrendChart();
             }
         });
 
         // 键盘快捷键
         document.addEventListener('keydown', (e) => {
-            this.handleKeyboardShortcuts(e);
-        });
-
-        // 错误处理
-        window.addEventListener('error', (e) => {
-            console.error('全局错误:', e.error);
-            this.handleGlobalError(e.error);
-        });
-
-        console.log('全局事件绑定完成');
-    },
-
-    /**
-     * 生成初始模拟数据
-     */
-    generateInitialData: function() {
-        const alarmRecords = AppDataManager.getAlarmRecords();
-        
-        // 如果没有数据，生成一些模拟数据
-        if (alarmRecords.length === 0) {
-            console.log('生成初始模拟数据...');
-            
-            // 生成10条模拟告警记录
-            const mockRecords = riskEngine.generateMockData(10);
-            mockRecords.forEach(record => {
-                AppDataManager.addAlarmRecord(record);
-            });
-            
-            // 更新驾驶舱
-            if (window.DashboardManager) {
-                window.DashboardManager.updateDashboard();
+            // Ctrl+R 刷新数据
+            if (e.ctrlKey && e.key === 'r') {
+                e.preventDefault();
+                this.refreshAll();
             }
             
-            console.log('初始模拟数据生成完成');
-        }
-    },
-
-    /**
-     * 处理窗口大小变化
-     */
-    handleResize: function() {
-        // 重新调整图表大小
-        if (window.pieChart) {
-            window.pieChart.resize();
-        }
-        if (window.lineChart) {
-            window.lineChart.resize();
-        }
-        
-        console.log('窗口大小变化处理完成');
-    },
-
-    /**
-     * 处理页面可见性变化
-     */
-    handlePageVisible: function() {
-        console.log('页面重新可见，刷新数据...');
-        
-        // 刷新驾驶舱数据
-        if (window.DashboardManager) {
-            window.DashboardManager.updateDashboard();
-        }
-        
-        // 刷新表格数据
-        if (window.TableManager) {
-            window.TableManager.refreshAllTables();
-        }
-    },
-
-    /**
-     * 处理键盘快捷键
-     * @param {KeyboardEvent} e - 键盘事件
-     */
-    handleKeyboardShortcuts: function(e) {
-        // Ctrl/Cmd + R: 刷新驾驶舱
-        if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
-            e.preventDefault();
-            if (window.DashboardManager) {
-                window.DashboardManager.refresh();
-            }
-        }
-        
-        // Ctrl/Cmd + N: 添加新记录
-        if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-            e.preventDefault();
-            addAlarmRecord();
-        }
-        
-        // Ctrl/Cmd + D: 生成模拟数据
-        if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-            e.preventDefault();
-            if (window.DashboardManager) {
-                window.DashboardManager.generateMockData();
-            }
-        }
-        
-        // Escape: 取消编辑
-        if (e.key === 'Escape') {
-            const editingRow = document.querySelector('.ant-row.editing');
-            if (editingRow) {
-                const recordId = editingRow.dataset.id;
-                if (window.TableManager) {
-                    window.TableManager.cancelEdit(recordId);
+            // Ctrl+E 导出报告
+            if (e.ctrlKey && e.key === 'e') {
+                e.preventDefault();
+                if (this.dashboard) {
+                    this.dashboard.exportReport();
                 }
             }
+        });
+
+        // 设置按钮
+        const settingsBtn = document.getElementById('settingsBtn');
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', () => {
+                this.showSettings();
+            });
         }
-    },
+    }
 
-    /**
-     * 处理全局错误
-     * @param {Error} error - 错误对象
-     */
-    handleGlobalError: function(error) {
-        console.error('全局错误处理:', error);
+    // 刷新所有数据
+    refreshAll() {
+        console.log('刷新所有数据...');
         
-        // 显示错误提示
-        this.showError('系统发生错误，请刷新页面重试');
+        if (this.dashboard) {
+            this.dashboard.refresh();
+        }
         
-        // 记录错误日志
-        this.logError(error);
-    },
+        if (this.tableManager) {
+            this.tableManager.refresh();
+        }
+        
+        Notification.show('所有数据已刷新', 'success');
+    }
 
-    /**
-     * 显示错误信息
-     * @param {string} message - 错误消息
-     */
-    showError: function(message) {
-        // 创建错误提示元素
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-notification';
-        errorDiv.innerHTML = `
-            <div class="error-content">
-                <span class="error-icon">⚠️</span>
-                <span class="error-message">${message}</span>
-                <button class="error-close" onclick="this.parentElement.parentElement.remove()">×</button>
+    // 显示设置
+    showSettings() {
+        const settings = {
+            autoRefresh: localStorage.getItem('autoRefresh') === 'true',
+            theme: localStorage.getItem('theme') || 'dark',
+            language: localStorage.getItem('language') || 'zh-CN'
+        };
+
+        const settingsHtml = `
+            <div class="settings-panel">
+                <h3>系统设置</h3>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="autoRefresh" ${settings.autoRefresh ? 'checked' : ''}>
+                        自动刷新数据
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>主题：</label>
+                    <select id="theme">
+                        <option value="dark" ${settings.theme === 'dark' ? 'selected' : ''}>深色</option>
+                        <option value="light" ${settings.theme === 'light' ? 'selected' : ''}>浅色</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>语言：</label>
+                    <select id="language">
+                        <option value="zh-CN" ${settings.language === 'zh-CN' ? 'selected' : ''}>中文</option>
+                        <option value="en-US" ${settings.language === 'en-US' ? 'selected' : ''}>English</option>
+                    </select>
+                </div>
+                <div class="setting-actions">
+                    <button class="btn btn-primary" onclick="ipeApp.saveSettings()">保存</button>
+                    <button class="btn btn-default" onclick="ipeApp.closeSettings()">取消</button>
+                </div>
             </div>
         `;
-        
-        // 添加样式
-        errorDiv.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #ff4d4f;
-            color: white;
-            padding: 12px 16px;
-            border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 10000;
-            max-width: 300px;
-            animation: slideIn 0.3s ease-out;
+
+        // 创建模态框
+        const modal = document.createElement('div');
+        modal.className = 'modal show';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>系统设置</h3>
+                    <button class="modal-close" onclick="ipeApp.closeSettings()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    ${settingsHtml}
+                </div>
+            </div>
         `;
-        
-        document.body.appendChild(errorDiv);
-        
-        // 3秒后自动移除
-        setTimeout(() => {
-            if (errorDiv.parentElement) {
-                errorDiv.remove();
-            }
-        }, 3000);
-    },
 
-    /**
-     * 记录错误日志
-     * @param {Error} error - 错误对象
-     */
-    logError: function(error) {
-        const errorLog = {
-            timestamp: new Date().toISOString(),
-            message: error.message,
-            stack: error.stack,
-            userAgent: navigator.userAgent,
-            url: window.location.href
-        };
-        
-        // 保存到localStorage
-        try {
-            const logs = JSON.parse(localStorage.getItem('ipe_error_logs') || '[]');
-            logs.push(errorLog);
-            
-            // 只保留最近10条错误日志
-            if (logs.length > 10) {
-                logs.splice(0, logs.length - 10);
-            }
-            
-            localStorage.setItem('ipe_error_logs', JSON.stringify(logs));
-        } catch (e) {
-            console.error('保存错误日志失败:', e);
+        document.body.appendChild(modal);
+    }
+
+    // 保存设置
+    saveSettings() {
+        const autoRefresh = document.getElementById('autoRefresh').checked;
+        const theme = document.getElementById('theme').value;
+        const language = document.getElementById('language').value;
+
+        localStorage.setItem('autoRefresh', autoRefresh);
+        localStorage.setItem('theme', theme);
+        localStorage.setItem('language', language);
+
+        // 应用主题
+        this.applyTheme(theme);
+
+        // 设置自动刷新
+        if (autoRefresh) {
+            this.startAutoRefresh();
+        } else {
+            this.stopAutoRefresh();
         }
-    },
 
-    /**
-     * 防抖函数
-     * @param {Function} func - 要防抖的函数
-     * @param {number} wait - 等待时间
-     * @returns {Function} 防抖后的函数
-     */
-    debounce: function(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    },
+        this.closeSettings();
+        Notification.show('设置已保存', 'success');
+    }
 
-    /**
-     * 获取系统信息
-     * @returns {object} 系统信息
-     */
-    getSystemInfo: function() {
+    // 关闭设置
+    closeSettings() {
+        const modal = document.querySelector('.modal');
+        if (modal) {
+            modal.remove();
+        }
+    }
+
+    // 应用主题
+    applyTheme(theme) {
+        document.body.className = `theme-${theme}`;
+    }
+
+    // 开始自动刷新
+    startAutoRefresh() {
+        this.autoRefreshInterval = setInterval(() => {
+            this.refreshAll();
+        }, 30000); // 30秒
+    }
+
+    // 停止自动刷新
+    stopAutoRefresh() {
+        if (this.autoRefreshInterval) {
+            clearInterval(this.autoRefreshInterval);
+            this.autoRefreshInterval = null;
+        }
+    }
+
+    // 获取系统状态
+    getSystemStatus() {
+        const alarmRecords = window.dataStorage ? window.dataStorage.getAlarmRecords() : [];
+        const recentAlarms = alarmRecords.filter(record => 
+            new Date(record.triggerTime) > new Date(Date.now() - 24 * 60 * 60 * 1000)
+        );
+
         return {
-            version: '2025.07',
-            userAgent: navigator.userAgent,
-            screenSize: {
-                width: screen.width,
-                height: screen.height
-            },
-            windowSize: {
-                width: window.innerWidth,
-                height: window.innerHeight
-            },
-            localStorage: typeof localStorage !== 'undefined',
-            chartJs: typeof Chart !== 'undefined',
-            timestamp: new Date().toISOString()
+            totalAlarms: alarmRecords.length,
+            recentAlarms: recentAlarms.length,
+            highRiskAlarms: recentAlarms.filter(r => r.riskLevel === 'high').length,
+            systemHealth: this.calculateSystemHealth(recentAlarms)
         };
-    },
-
-    /**
-     * 导出系统信息
-     */
-    exportSystemInfo: function() {
-        const systemInfo = this.getSystemInfo();
-        const dataStr = JSON.stringify(systemInfo, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(dataBlob);
-        link.download = `ipe_system_info_${new Date().toISOString().slice(0, 10)}.json`;
-        link.click();
-    },
-
-    /**
-     * 清理系统数据
-     */
-    cleanupSystem: function() {
-        if (confirm('确定要清理所有系统数据吗？此操作不可恢复。')) {
-            // 清理localStorage
-            const keys = Object.keys(localStorage);
-            keys.forEach(key => {
-                if (key.startsWith('ipe_')) {
-                    localStorage.removeItem(key);
-                }
-            });
-            
-            // 刷新页面
-            location.reload();
-        }
     }
-};
 
-// 全局工具函数
-window.AppController = AppController;
+    // 计算系统健康度
+    calculateSystemHealth(alarms) {
+        const highRiskCount = alarms.filter(r => r.riskLevel === 'high').length;
+        const totalCount = alarms.length;
 
-// 添加CSS动画
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
+        if (totalCount === 0) return 'excellent';
+        if (highRiskCount === 0) return 'good';
+        if (highRiskCount <= 2) return 'warning';
+        return 'critical';
     }
-    
-    .error-notification .error-content {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .error-notification .error-close {
-        background: none;
-        border: none;
-        color: white;
-        font-size: 18px;
-        cursor: pointer;
-        padding: 0;
-        margin-left: auto;
-    }
-    
-    .error-notification .error-close:hover {
-        opacity: 0.8;
-    }
-`;
-document.head.appendChild(style);
+}
 
-// 页面加载完成后初始化应用
-document.addEventListener('DOMContentLoaded', function() {
-    // 延迟初始化，确保所有模块都已加载
-    setTimeout(() => {
-        AppController.init();
-    }, 500);
-});
+// 全局应用实例（由index.html中的初始化脚本管理）
+
+// 页面加载完成后初始化（由index.html中的初始化脚本处理）
+// 这里保留全局函数供外部调用
 
 // 全局函数
-function getSystemInfo() {
-    return AppController.getSystemInfo();
+function refreshAll() {
+    if (ipeApp) {
+        ipeApp.refreshAll();
+    }
 }
 
-function exportSystemInfo() {
-    AppController.exportSystemInfo();
+function exportReport() {
+    if (ipeApp && ipeApp.dashboard) {
+        ipeApp.dashboard.exportReport();
+    }
 }
 
-function cleanupSystem() {
-    AppController.cleanupSystem();
-}
-
-// 添加状态徽章样式
-const statusStyle = document.createElement('style');
-statusStyle.textContent = `
-    .status-badge {
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 500;
+function showSettings() {
+    if (ipeApp) {
+        ipeApp.showSettings();
     }
-    
-    .status-badge.success {
-        background: #f6ffed;
-        color: #52c41a;
-        border: 1px solid #b7eb8f;
-    }
-    
-    .status-badge.failed {
-        background: #fff2f0;
-        color: #ff4d4f;
-        border: 1px solid #ffccc7;
-    }
-    
-    .edit-input {
-        width: 100%;
-        padding: 4px 8px;
-        border: 1px solid #d9d9d9;
-        border-radius: 4px;
-        font-size: 14px;
-    }
-    
-    .edit-input:focus {
-        outline: none;
-        border-color: #1890ff;
-        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-    }
-`;
-document.head.appendChild(statusStyle);
-
-console.log('IPE系统主模块加载完成'); 
+} 

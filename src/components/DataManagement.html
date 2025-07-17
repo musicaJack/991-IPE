@@ -1,0 +1,124 @@
+<!-- 数据管理区域 -->
+<section class="data-management-section" style="background: #ffffff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); padding: 30px; margin-bottom: 30px;">
+    <div class="section-header" style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="font-size: 24px; font-weight: 600; color: #262626; margin: 0;">
+            <i class="icon-table" style="margin-right: 8px; color: #1890ff;"></i>
+            数据管理
+        </h2>
+        <div style="display: flex; gap: 12px;">
+            <button class="btn-clear" id="clearDataBtn">
+                <i class="icon-delete"></i>
+                清空数据
+            </button>
+            <button class="btn-sync" id="syncDataBtn">
+                <i class="icon-sync"></i>
+                信息同步
+            </button>
+        </div>
+    </div>
+
+    <!-- 标签页导航 -->
+    <div class="tabs" style="margin-bottom: 20px;">
+        <div class="tab-nav" style="display: flex; border-bottom: 1px solid #e8e8e8; margin-bottom: 20px;">
+            <button class="tab-btn active" data-tab="users" style="background: none; border: none; padding: 12px 24px; cursor: pointer; font-size: 14px; color: #1890ff; border-bottom: 2px solid #1890ff; transition: all 0.3s ease;">
+                <i class="icon-user" style="margin-right: 6px;"></i>
+                用户身份
+            </button>
+            <button class="tab-btn" data-tab="assets" style="background: none; border: none; padding: 12px 24px; cursor: pointer; font-size: 14px; color: #666666; border-bottom: 2px solid transparent; transition: all 0.3s ease;">
+                <i class="icon-database" style="margin-right: 6px;"></i>
+                基线资产
+            </button>
+            <button class="tab-btn" data-tab="rules" style="background: none; border: none; padding: 12px 24px; cursor: pointer; font-size: 14px; color: #666666; border-bottom: 2px solid transparent; transition: all 0.3s ease;">
+                <i class="icon-rule" style="margin-right: 6px;"></i>
+                风险规则
+            </button>
+            <button class="tab-btn" data-tab="alarms" style="background: none; border: none; padding: 12px 24px; cursor: pointer; font-size: 14px; color: #666666; border-bottom: 2px solid transparent; transition: all 0.3s ease;">
+                <i class="icon-bell" style="margin-right: 6px;"></i>
+                告警记录
+            </button>
+        </div>
+
+        <!-- 标签页内容 -->
+        <div class="tab-content">
+            <!-- 用户身份表格 -->
+            <div class="tab-pane active" id="usersTab">
+                <div class="table-container">
+                    <table class="data-table" id="usersTable" style="width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);">
+                        <thead style="background: #fafafa;">
+                            <tr>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">用户ID</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">姓名</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">身份证号</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">有效期</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- 数据将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 基线资产表格 -->
+            <div class="tab-pane" id="assetsTab" style="display: none;">
+                <div class="table-container">
+                    <table class="data-table" id="assetsTable" style="width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);">
+                        <thead style="background: #fafafa;">
+                            <tr>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">资产ID</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">资产类型</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">账户号</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">快照时间</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">哈希值</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assetsTableBody">
+                            <!-- 数据将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 风险规则表格 -->
+            <div class="tab-pane" id="rulesTab" style="display: none;">
+                <div class="table-container">
+                    <table class="data-table" id="rulesTable" style="width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);">
+                        <thead style="background: #fafafa;">
+                            <tr>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">规则ID</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">扫描条件</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">比对算法</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">告警阈值</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rulesTableBody">
+                            <!-- 数据将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 告警记录表格 -->
+            <div class="tab-pane" id="alarmsTab" style="display: none;">
+                <div class="table-container">
+                    <table class="data-table" id="alarmsTable" style="width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);">
+                        <thead style="background: #fafafa;">
+                            <tr>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">事件ID</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">风险等级</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">通知渠道</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">发送状态</th>
+                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">触发时间</th>
+                            </tr>
+                        </thead>
+                        <tbody id="alarmsTableBody">
+                            <!-- 数据将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> 

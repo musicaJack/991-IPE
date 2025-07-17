@@ -4,206 +4,500 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>身份保护实体(IPE)系统扩展版</title>
-    <meta name="description" content="核心团队成员网络身份安全评估与规划系统">
     
-    <!-- 外部依赖 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ant-design/icons@4.7.0/lib/index.css">
-    
-    <!-- 自定义样式 -->
+    <!-- CSS 样式 -->
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/ant-design.css">
+    <link rel="stylesheet" href="css/icons.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    
+    <style>
+        /* 加载状态 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1890ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        /* 系统状态指示器 */
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #52c41a;
+        }
+
+        .status-indicator.warning {
+            background: #faad14;
+        }
+
+        .status-indicator.error {
+            background: #ff4d4f;
+        }
+
+        /* 主容器 */
+        .app-container {
+            min-height: 100vh;
+            background: #f5f5f5;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* 组件容器 */
+        .component-container {
+            margin-bottom: 24px;
+        }
+        
+
+    </style>
 </head>
 <body>
-    <!-- 顶部标题栏 -->
-    <header class="security-header">
-        <div class="header-content">
-            <div class="header-left">
-                <h1 class="system-title">身份保护实体(IPE)系统扩展版</h1>
-                <p class="system-subtitle">核心团队成员网络身份安全评估与规划系统</p>
-            </div>
-            <div class="header-right">
-                <p class="version-info">版本 2025.07 | 基于GB/T 9385-2008规范</p>
-                <div class="data-status" id="data-status">数据状态: 正常</div>
-            </div>
+    <!-- 加载覆盖层 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div style="text-align: center;">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">系统初始化中...</div>
         </div>
-    </header>
-
-    <!-- 主内容区 -->
-    <div class="dashboard-layout">
-        <!-- 左侧风险驾驶舱 -->
-        <section class="risk-cockpit">
-            <div class="cockpit-header">
-                <h2>风险驾驶舱</h2>
-                <div class="cockpit-actions">
-                    <button class="btn-reset" onclick="resetAllData()">重置数据</button>
-                </div>
-            </div>
-            
-            <!-- KPI指标卡片 -->
-            <div class="kpi-container">
-                <div class="kpi-card kpi-high">
-                    <div class="kpi-icon">🔴</div>
-                    <div class="kpi-content">
-                        <h3>高风险事件</h3>
-                        <div class="kpi-value" id="high-risk-value">0</div>
-                        <div class="kpi-desc">24小时内发生</div>
-                    </div>
-                </div>
-                
-                <div class="kpi-card kpi-medium">
-                    <div class="kpi-icon">🟡</div>
-                    <div class="kpi-content">
-                        <h3>中风险事件</h3>
-                        <div class="kpi-value" id="medium-risk-value">0</div>
-                        <div class="kpi-desc">24小时内发生</div>
-                    </div>
-                </div>
-                
-                <div class="kpi-card kpi-low">
-                    <div class="kpi-icon">🟢</div>
-                    <div class="kpi-content">
-                        <h3>低风险事件</h3>
-                        <div class="kpi-value" id="low-risk-value">0</div>
-                        <div class="kpi-desc">24小时内发生</div>
-                    </div>
-                </div>
-                
-                <div class="kpi-card kpi-trend">
-                    <div class="kpi-icon">📈</div>
-                    <div class="kpi-content">
-                        <h3>风险趋势</h3>
-                        <div class="kpi-value">+<span id="risk-trend-value">0</span>%</div>
-                        <div class="kpi-desc">周环比变化率</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 图表容器 -->
-            <div class="chart-container">
-                <div class="chart-item">
-                    <h3>风险分布</h3>
-                    <canvas id="pie-chart"></canvas>
-                </div>
-                <div class="chart-item">
-                    <h3>7天趋势分析</h3>
-                    <canvas id="line-chart"></canvas>
-                </div>
-            </div>
-        </section>
-        
-        <!-- 右侧数据表格 -->
-        <section class="data-control-panel">
-            <div class="panel-header">
-                <h2>数据配置</h2>
-            </div>
-            
-            <!-- 标签页 -->
-            <div class="ant-tabs">
-                <div class="tab-nav">
-                    <button class="tab-link active" onclick="openTab(event, 'alarm-records')">告警记录</button>
-                    <button class="tab-link" onclick="openTab(event, 'user-identities')">用户身份</button>
-                    <button class="tab-link" onclick="openTab(event, 'base-assets')">基线资产</button>
-                    <button class="tab-link" onclick="openTab(event, 'risk-rules')">风险规则</button>
-                </div>
-                
-                <!-- 告警记录表格 -->
-                <div id="alarm-records" class="tab-content active">
-                    <div class="table-header">
-                        <h3>告警记录管理</h3>
-                        <button class="btn-add" onclick="addAlarmRecord()">添加记录</button>
-                    </div>
-                    <div class="ant-table">
-                        <div class="ant-table-header">
-                            <div class="ant-row">
-                                <div class="ant-col">风险等级</div>
-                                <div class="ant-col">通知渠道</div>
-                                <div class="ant-col">发送状态</div>
-                                <div class="ant-col">发生时间</div>
-                                <div class="ant-col">操作</div>
-                            </div>
-                        </div>
-                        <div class="ant-table-body" id="alarm-table-body">
-                            <!-- 动态表格内容 -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 用户身份表格 -->
-                <div id="user-identities" class="tab-content">
-                    <div class="table-header">
-                        <h3>用户身份管理</h3>
-                        <button class="btn-add" onclick="addUserIdentity()">添加用户</button>
-                    </div>
-                    <div class="ant-table">
-                        <div class="ant-table-header">
-                            <div class="ant-row">
-                                <div class="ant-col">姓名</div>
-                                <div class="ant-col">身份证号</div>
-                                <div class="ant-col">有效期</div>
-                                <div class="ant-col">状态</div>
-                                <div class="ant-col">操作</div>
-                            </div>
-                        </div>
-                        <div class="ant-table-body" id="user-table-body">
-                            <!-- 动态表格内容 -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 基线资产表格 -->
-                <div id="base-assets" class="tab-content">
-                    <div class="table-header">
-                        <h3>基线资产管理</h3>
-                        <button class="btn-add" onclick="addBaseAsset()">添加资产</button>
-                    </div>
-                    <div class="ant-table">
-                        <div class="ant-table-header">
-                            <div class="ant-row">
-                                <div class="ant-col">资产ID</div>
-                                <div class="ant-col">类型</div>
-                                <div class="ant-col">加密账户号</div>
-                                <div class="ant-col">快照时间</div>
-                                <div class="ant-col">操作</div>
-                            </div>
-                        </div>
-                        <div class="ant-table-body" id="asset-table-body">
-                            <!-- 动态表格内容 -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 风险规则表格 -->
-                <div id="risk-rules" class="tab-content">
-                    <div class="table-header">
-                        <h3>风险规则配置</h3>
-                        <button class="btn-add" onclick="addRiskRule()">添加规则</button>
-                    </div>
-                    <div class="ant-table">
-                        <div class="ant-table-header">
-                            <div class="ant-row">
-                                <div class="ant-col">规则ID</div>
-                                <div class="ant-col">扫描条件</div>
-                                <div class="ant-col">比对算法</div>
-                                <div class="ant-col">告警阈值</div>
-                                <div class="ant-col">操作</div>
-                            </div>
-                        </div>
-                        <div class="ant-table-body" id="rule-table-body">
-                            <!-- 动态表格内容 -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
     </div>
 
-    <!-- JavaScript文件 -->
+    <div class="app-container">
+        <!-- 头部组件容器 -->
+        <div id="headerContainer" class="component-container"></div>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+                    <!-- 仪表板组件容器 -->
+        <div id="dashboardContainer" class="component-container">
+            <!-- 风险驾驶舱 -->
+            <section class="dashboard-section" id="dashboardSection">
+                <div class="section-header" style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="font-size: 24px; font-weight: 600; color: #262626; margin: 0;">
+                        <i class="icon-dashboard" style="margin-right: 8px; color: #1890ff;"></i>
+                        风险驾驶舱
+                    </h2>
+                    <button class="btn btn-primary" id="refreshBtn" style="background: #1890ff; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                        <i class="icon-refresh" style="font-size: 16px;"></i>
+                        刷新数据
+                    </button>
+                </div>
+
+                <!-- 指标卡片 -->
+                <div class="kpi-container">
+                    <div class="kpi-card kpi-high">
+                        <div class="kpi-icon">
+                            <i class="icon-warning" style="color: #ff4d4f; font-size: 24px;"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>高风险事件</h3>
+                            <div class="kpi-value" id="highRiskCount">8</div>
+                            <div class="kpi-desc">24小时内发生</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-medium">
+                        <div class="kpi-icon">
+                            <i class="icon-alert" style="color: #faad14; font-size: 24px;"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>中风险事件</h3>
+                            <div class="kpi-value" id="mediumRiskCount">15</div>
+                            <div class="kpi-desc">24小时内发生</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-low">
+                        <div class="kpi-icon">
+                            <i class="icon-info" style="color: #52c41a; font-size: 24px;"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>低风险事件</h3>
+                            <div class="kpi-value" id="lowRiskCount">23</div>
+                            <div class="kpi-desc">24小时内发生</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-trend">
+                        <div class="kpi-icon">
+                            <i class="icon-bar-chart" style="color: #1890ff; font-size: 24px;"></i>
+                        </div>
+                        <div class="kpi-content">
+                            <h3>事件趋势</h3>
+                            <div class="kpi-value" id="totalEvents">+12%</div>
+                            <div class="kpi-desc">较昨日增长</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 图表区域 -->
+                <div class="chart-container">
+                    <!-- 环形图 -->
+                    <div class="chart-item">
+                        <h3>风险等级分布</h3>
+                        <div class="donut-chart" style="position: relative; width: 200px; height: 200px; margin: 0 auto;">
+                            <svg width="200" height="200" viewBox="0 0 200 200">
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#f0f0f0" stroke-width="16"/>
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#ff4d4f" stroke-width="16" stroke-dasharray="0 251.2" class="progress high" transform="rotate(-90 100 100)"/>
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#faad14" stroke-width="16" stroke-dasharray="0 251.2" class="progress medium" transform="rotate(-90 100 100)"/>
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#52c41a" stroke-width="16" stroke-dasharray="0 251.2" class="progress low" transform="rotate(-90 100 100)"/>
+                            </svg>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                                <div id="donutValue" style="font-size: 24px; font-weight: 700; color: #262626;">46</div>
+                                <div class="donut-label">总事件</div>
+                            </div>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color high"></div>
+                                <span>高风险</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color medium"></div>
+                                <span>中风险</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color low"></div>
+                                <span>低风险</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 趋势图 -->
+                    <div class="chart-item">
+                        <h3>7天风险趋势</h3>
+                        <div class="line-chart">
+                            <canvas id="trendCanvas" width="400" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+            <!-- 数据管理组件容器 -->
+            <div id="dataManagementContainer" class="component-container">
+                <!-- 数据管理区域 -->
+                <section class="data-management-section" style="background: #ffffff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); padding: 30px; margin-bottom: 30px;">
+                    <div class="section-header" style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+                        <h2 style="font-size: 24px; font-weight: 600; color: #262626; margin: 0;">
+                            <i class="icon-table" style="margin-right: 8px; color: #1890ff;"></i>
+                            数据管理
+                        </h2>
+                        <div style="display: flex; gap: 12px;">
+                            <button class="btn-clear" id="clearDataBtn">
+                                <i class="icon-delete"></i>
+                                清空数据
+                            </button>
+                            <button class="btn-sync" id="syncDataBtn">
+                                <i class="icon-sync"></i>
+                                信息同步
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 标签页导航 -->
+                    <div class="tabs" style="margin-bottom: 20px;">
+                        <div class="tab-nav" style="display: flex; border-bottom: 1px solid #e8e8e8; margin-bottom: 20px;">
+                            <button class="tab-btn active" data-tab="users" style="background: none; border: none; padding: 12px 24px; cursor: pointer; font-size: 14px; color: #1890ff; border-bottom: 2px solid #1890ff; transition: all 0.3s ease;">
+                                <i class="icon-user" style="margin-right: 6px;"></i>
+                                用户身份
+                            </button>
+                            <button class="tab-btn" data-tab="assets" style="background: none; border: none; padding: 12px 24px; cursor: pointer; font-size: 14px; color: #666666; border-bottom: 2px solid transparent; transition: all 0.3s ease;">
+                                <i class="icon-database" style="margin-right: 6px;"></i>
+                                基线资产
+                            </button>
+                            <button class="tab-btn" data-tab="rules" style="background: none; border: none; padding: 12px 24px; cursor: pointer; font-size: 14px; color: #666666; border-bottom: 2px solid transparent; transition: all 0.3s ease;">
+                                <i class="icon-rule" style="margin-right: 6px;"></i>
+                                风险规则
+                            </button>
+                            <button class="tab-btn" data-tab="alarms" style="background: none; border: none; padding: 12px 24px; cursor: pointer; font-size: 14px; color: #666666; border-bottom: 2px solid transparent; transition: all 0.3s ease;">
+                                <i class="icon-bell" style="margin-right: 6px;"></i>
+                                告警记录
+                            </button>
+                        </div>
+
+                        <!-- 标签页内容 -->
+                        <div class="tab-content">
+                            <!-- 用户身份表格 -->
+                            <div class="tab-pane active" id="usersTab">
+                                <div class="table-container">
+                                    <table class="data-table" id="usersTable" style="width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);">
+                                        <thead style="background: #fafafa;">
+                                            <tr>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">用户ID</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">姓名</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">身份证号</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">有效期</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">状态</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="usersTableBody">
+                                            <!-- 数据将通过JavaScript动态加载 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 基线资产表格 -->
+                            <div class="tab-pane" id="assetsTab" style="display: none;">
+                                <div class="table-container">
+                                    <table class="data-table" id="assetsTable" style="width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);">
+                                        <thead style="background: #fafafa;">
+                                            <tr>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">资产ID</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">资产类型</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">账户号</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">快照时间</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">哈希值</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="assetsTableBody">
+                                            <!-- 数据将通过JavaScript动态加载 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 风险规则表格 -->
+                            <div class="tab-pane" id="rulesTab" style="display: none;">
+                                <div class="table-container">
+                                    <table class="data-table" id="rulesTable" style="width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);">
+                                        <thead style="background: #fafafa;">
+                                            <tr>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">规则ID</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">扫描条件</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">比对算法</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">告警阈值</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">状态</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rulesTableBody">
+                                            <!-- 数据将通过JavaScript动态加载 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 告警记录表格 -->
+                            <div class="tab-pane" id="alarmsTab" style="display: none;">
+                                <div class="table-container">
+                                    <table class="data-table" id="alarmsTable" style="width: 100%; border-collapse: collapse; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);">
+                                        <thead style="background: #fafafa;">
+                                            <tr>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">事件ID</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">风险等级</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">通知渠道</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">发送状态</th>
+                                                <th style="padding: 12px 16px; text-align: left; font-weight: 600; color: #262626; border-bottom: 1px solid #e8e8e8;">触发时间</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="alarmsTableBody">
+                                            <!-- 数据将通过JavaScript动态加载 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- 模态框组件容器 -->
+        <div id="modalContainer"></div>
+    </div>
+    
+
+
+    <!-- JavaScript 模块 -->
+    <script src="src/utils/ComponentLoader.js"></script>
     <script src="js/data-storage.js"></script>
     <script src="js/risk-engine.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/table.js"></script>
     <script src="js/main.js"></script>
+    
+    <!-- 初始化脚本 -->
+    <script>
+        // 全局变量
+        let componentLoader, dataStorage, riskEngine, dashboard, tableManager;
+        
+        // 系统初始化
+        async function initializeSystem() {
+            try {
+                console.log('开始初始化IPE系统...');
+                
+                // 初始化组件加载器
+                componentLoader = new ComponentLoader();
+                console.log('ComponentLoader初始化完成');
+                
+                // 加载组件
+                await loadAllComponents();
+                
+                // 等待DOM更新
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                // 初始化数据存储
+                if (window.DataStorage) {
+                    window.dataStorage = new window.DataStorage();
+                    console.log('DataStorage实例创建成功');
+                    
+                    // 生成初始数据
+                    window.dataStorage.generateMockData();
+                    console.log('初始数据生成完成');
+                } else {
+                    console.error('DataStorage类未找到');
+                }
+                
+                // 等待组件完全加载后再初始化JavaScript模块
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // 初始化各个模块
+                console.log('开始初始化主应用...');
+                window.ipeApp = new IPEApp();
+                console.log('IPEApp初始化完成');
+                
+                // 确保Dashboard正确初始化
+                if (window.ipeApp && window.ipeApp.dashboard) {
+                    console.log('Dashboard实例存在，更新显示...');
+                    window.ipeApp.dashboard.updateMetrics();
+                    window.ipeApp.dashboard.updateDonutChart();
+                    setTimeout(() => {
+                        window.ipeApp.dashboard.initTrendChart();
+                    }, 500);
+                }
+                
+                // 确保TableManager正确初始化
+                if (window.ipeApp && window.ipeApp.tableManager) {
+                    console.log('TableManager实例存在，初始化表格...');
+                    window.ipeApp.tableManager.loadTableData();
+                }
+                
+                // 手动触发数据同步
+                // if (window.ipeApp && window.ipeApp.tableManager) {
+                //     window.ipeApp.tableManager.syncData();
+                // }
+                
+                // 更新系统状态
+                updateSystemStatus('success', '系统正常');
+                
+                console.log('IPE系统初始化完成');
+                
+                // 隐藏加载覆盖层
+                setTimeout(() => {
+                    const loadingOverlay = document.getElementById('loadingOverlay');
+                    if (loadingOverlay) {
+                        loadingOverlay.style.display = 'none';
+                    }
+                }, 500);
+                
+            } catch (error) {
+                console.error('系统初始化失败:', error);
+                updateSystemStatus('error', '系统异常');
+                
+                // 显示错误信息
+                const loadingText = document.querySelector('.loading-text');
+                if (loadingText) {
+                    loadingText.textContent = `初始化失败: ${error.message}`;
+                    loadingText.style.color = '#ff4d4f';
+                }
+                
+                // 3秒后隐藏加载覆盖层
+                setTimeout(() => {
+                    const loadingOverlay = document.getElementById('loadingOverlay');
+                    if (loadingOverlay) {
+                        loadingOverlay.style.display = 'none';
+                    }
+                }, 3000);
+            }
+        }
+
+        // 加载所有组件
+        async function loadAllComponents() {
+            try {
+                console.log('开始加载组件...');
+                
+                const components = [
+                    { name: 'Header', target: 'headerContainer' },
+                    { name: 'Modal', target: 'modalContainer' }
+                ];
+                
+                await componentLoader.loadComponents(components);
+                console.log('所有组件加载完成');
+                
+            } catch (error) {
+                console.error('组件加载失败:', error);
+                throw error;
+            }
+        }
+        
+        // 更新系统状态
+        function updateSystemStatus(status, text) {
+            const indicator = document.getElementById('systemStatusIndicator');
+            const statusText = document.getElementById('systemStatusText');
+            
+            if (indicator) {
+                indicator.className = `status-indicator ${status}`;
+            }
+            
+            if (statusText) {
+                statusText.textContent = text;
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面加载完成，开始初始化...');
+            
+            // 延迟初始化，确保所有资源加载完成
+            setTimeout(initializeSystem, 100);
+        });
+        
+        // 错误处理
+        window.addEventListener('error', function(event) {
+            console.error('JavaScript错误:', event.error);
+            updateSystemStatus('error', '系统错误');
+        });
+        
+        // 未处理的Promise拒绝
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('未处理的Promise拒绝:', event.reason);
+            updateSystemStatus('warning', '系统警告');
+        });
+        
+
+    </script>
 </body>
 </html> 

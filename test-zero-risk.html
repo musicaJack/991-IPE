@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0风险状态测试</title>
+    <style>
+        body {
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .test-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #262626;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn-primary {
+            background: #1890ff;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #52c41a;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #faad14;
+            color: white;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .status.success {
+            background: #f6ffed;
+            color: #52c41a;
+            border: 1px solid #b7eb8f;
+        }
+        
+        .status.warning {
+            background: #fff7e6;
+            color: #faad14;
+            border: 1px solid #ffd591;
+        }
+        
+        .chart-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #262626;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">0风险状态规格化显示测试</h1>
+        
+        <div id="status" class="status warning">
+            等待测试...
+        </div>
+        
+        <div class="test-buttons">
+            <button class="btn btn-primary" onclick="testZeroRisk()">
+                测试0风险状态
+            </button>
+            <button class="btn btn-success" onclick="testNormalRisk()">
+                测试正常风险
+            </button>
+            <button class="btn btn-warning" onclick="testMixedRisk()">
+                测试混合风险
+            </button>
+        </div>
+        
+        <!-- 风险驾驶舱 -->
+        <section class="dashboard-section" id="dashboardSection">
+            <div class="section-header" style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 24px; font-weight: 600; color: #262626; margin: 0;">
+                    <i class="icon-dashboard" style="margin-right: 8px; color: #1890ff;"></i>
+                    风险驾驶舱
+                </h2>
+                <button class="btn btn-primary" id="refreshBtn" style="background: #1890ff; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                    <i class="icon-refresh" style="font-size: 16px;"></i>
+                    刷新数据
+                </button>
+            </div>
+
+            <!-- 指标卡片 -->
+            <div class="metric-cards">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="icon-warning" style="color: #ff4d4f; font-size: 24px;"></i>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value" id="highRiskCount">0</div>
+                        <div class="metric-label">高风险事件</div>
+                        <div class="metric-desc">24小时内发生</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="icon-alert" style="color: #faad14; font-size: 24px;"></i>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value" id="mediumRiskCount">0</div>
+                        <div class="metric-label">中风险事件</div>
+                        <div class="metric-desc">24小时内发生</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="icon-info" style="color: #52c41a; font-size: 24px;"></i>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value" id="lowRiskCount">0</div>
+                        <div class="metric-label">低风险事件</div>
+                        <div class="metric-desc">24小时内发生</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="icon-bar-chart" style="color: #1890ff; font-size: 24px;"></i>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value" id="totalEvents">0</div>
+                        <div class="metric-label">事件趋势</div>
+                        <div class="metric-desc">较昨日增长</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图表区域 -->
+            <div class="chart-section" style="margin-top: 30px;">
+                <div class="chart-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <!-- 环形图 -->
+                    <div class="chart-card">
+                        <h3 class="chart-title">风险分布</h3>
+                        <div class="donut-chart" style="position: relative; width: 200px; height: 200px; margin: 0 auto;">
+                            <svg width="200" height="200" viewBox="0 0 200 200">
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#f0f0f0" stroke-width="16"/>
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#ff4d4f" stroke-width="16" stroke-dasharray="40 126" class="progress high" transform="rotate(-90 100 100)"/>
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#faad14" stroke-width="16" stroke-dasharray="60 106" class="progress medium" transform="rotate(-90 100 100)"/>
+                                <circle cx="100" cy="100" r="80" fill="none" stroke="#52c41a" stroke-width="16" stroke-dasharray="80 86" class="progress low" transform="rotate(-90 100 100)"/>
+                            </svg>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                                <div id="donutValue" style="font-size: 24px; font-weight: 700; color: #262626;">0</div>
+                                <div class="donut-label">总事件</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 趋势图 -->
+                    <div class="chart-card">
+                        <h3 class="chart-title">7天趋势</h3>
+                        <div class="line-chart">
+                            <canvas id="trendCanvas" width="400" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- JavaScript 模块 -->
+    <script src="js/data-storage.js"></script>
+    <script src="js/dashboard.js"></script>
+    
+    <script>
+        let dashboard, dataStorage;
+        
+        function updateStatus(message, type = 'warning') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+        }
+        
+        function testZeroRisk() {
+            updateStatus('测试0风险状态显示...', 'warning');
+            
+            try {
+                // 初始化数据存储并清空所有告警记录
+                if (!dataStorage) {
+                    dataStorage = new DataStorage();
+                }
+                dataStorage.alarmRecords = [];
+                console.log('清空所有告警记录');
+                
+                // 初始化仪表板
+                if (dashboard) {
+                    dashboard.updateMetrics();
+                    dashboard.updateDonutChart();
+                    dashboard.generateTrendData();
+                    dashboard.renderTrendChart();
+                } else {
+                    dashboard = new Dashboard();
+                }
+                
+                setTimeout(() => {
+                    updateStatus('0风险状态测试完成 - 所有指标应显示绿色', 'success');
+                }, 1000);
+                
+            } catch (error) {
+                console.error('0风险状态测试错误:', error);
+                updateStatus(`0风险状态测试失败: ${error.message}`, 'error');
+            }
+        }
+        
+        function testNormalRisk() {
+            updateStatus('测试正常风险状态显示...', 'warning');
+            
+            try {
+                // 初始化数据存储并生成正常数据
+                if (!dataStorage) {
+                    dataStorage = new DataStorage();
+                }
+                dataStorage.generateMockData();
+                console.log('生成正常风险数据');
+                
+                // 初始化仪表板
+                if (dashboard) {
+                    dashboard.updateMetrics();
+                    dashboard.updateDonutChart();
+                    dashboard.generateTrendData();
+                    dashboard.renderTrendChart();
+                } else {
+                    dashboard = new Dashboard();
+                }
+                
+                setTimeout(() => {
+                    updateStatus('正常风险状态测试完成 - 指标应显示正常颜色', 'success');
+                }, 1000);
+                
+            } catch (error) {
+                console.error('正常风险状态测试错误:', error);
+                updateStatus(`正常风险状态测试失败: ${error.message}`, 'error');
+            }
+        }
+        
+        function testMixedRisk() {
+            updateStatus('测试混合风险状态显示...', 'warning');
+            
+            try {
+                // 初始化数据存储并生成混合数据
+                if (!dataStorage) {
+                    dataStorage = new DataStorage();
+                }
+                
+                // 只生成高风险和中风险数据，低风险为0
+                dataStorage.alarmRecords = [
+                    { riskLevel: 'high', timestamp: new Date().toISOString() },
+                    { riskLevel: 'high', timestamp: new Date().toISOString() },
+                    { riskLevel: 'medium', timestamp: new Date().toISOString() },
+                    { riskLevel: 'medium', timestamp: new Date().toISOString() },
+                    { riskLevel: 'medium', timestamp: new Date().toISOString() }
+                ];
+                console.log('生成混合风险数据');
+                
+                // 初始化仪表板
+                if (dashboard) {
+                    dashboard.updateMetrics();
+                    dashboard.updateDonutChart();
+                    dashboard.generateTrendData();
+                    dashboard.renderTrendChart();
+                } else {
+                    dashboard = new Dashboard();
+                }
+                
+                setTimeout(() => {
+                    updateStatus('混合风险状态测试完成 - 部分指标应显示正常颜色', 'success');
+                }, 1000);
+                
+            } catch (error) {
+                console.error('混合风险状态测试错误:', error);
+                updateStatus(`混合风险状态测试失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面加载完成，开始初始化...');
+            
+            // 延迟执行测试
+            setTimeout(() => {
+                testZeroRisk();
+            }, 500);
+        });
+    </script>
+</body>
+</html> 

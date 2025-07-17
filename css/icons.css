@@ -1,0 +1,324 @@
+/* ===== 本地图标样式 ===== */
+
+/* 基础图标样式 */
+.icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    fill: currentColor;
+    overflow: hidden;
+}
+
+/* 状态图标 */
+.icon-success::before {
+    content: "✓";
+    color: #52c41a;
+    font-weight: bold;
+}
+
+.icon-error::before {
+    content: "✗";
+    color: #ff4d4f;
+    font-weight: bold;
+}
+
+.icon-warning::before {
+    content: "⚠";
+    color: #faad14;
+    font-weight: bold;
+}
+
+.icon-info::before {
+    content: "ℹ";
+    color: #1890ff;
+    font-weight: bold;
+}
+
+/* 操作图标 */
+.icon-edit::before {
+    content: "✎";
+}
+
+.icon-delete::before {
+    content: "🗑";
+}
+
+.icon-add::before {
+    content: "+";
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.icon-save::before {
+    content: "💾";
+}
+
+.icon-cancel::before {
+    content: "✕";
+}
+
+.icon-refresh::before {
+    content: "🔄";
+}
+
+.icon-sync::before {
+    content: "🔄";
+}
+
+/* 风险等级图标 */
+.icon-high-risk::before {
+    content: "🔴";
+}
+
+.icon-medium-risk::before {
+    content: "🟡";
+}
+
+.icon-low-risk::before {
+    content: "🟢";
+}
+
+/* 通知渠道图标 */
+.icon-wechat::before {
+    content: "💬";
+}
+
+.icon-sms::before {
+    content: "📱";
+}
+
+.icon-email::before {
+    content: "📧";
+}
+
+/* 数据状态图标 */
+.icon-data::before {
+    content: "📊";
+}
+
+.icon-chart::before {
+    content: "📈";
+}
+
+.icon-table::before {
+    content: "📋";
+}
+
+/* 系统图标 */
+.icon-system::before {
+    content: "⚙";
+}
+
+.icon-user::before {
+    content: "👤";
+}
+
+.icon-security::before {
+    content: "🔒";
+}
+
+.icon-alert::before {
+    content: "🚨";
+}
+
+.icon-dashboard::before {
+    content: "📊";
+}
+
+.icon-warning::before {
+    content: "⚠";
+}
+
+.icon-bar-chart::before {
+    content: "📈";
+}
+
+.icon-table::before {
+    content: "📋";
+}
+
+.icon-database::before {
+    content: "🗄";
+}
+
+.icon-rule::before {
+    content: "📏";
+}
+
+.icon-bell::before {
+    content: "🔔";
+}
+
+/* 方向图标 */
+.icon-up::before {
+    content: "↑";
+}
+
+.icon-down::before {
+    content: "↓";
+}
+
+.icon-left::before {
+    content: "←";
+}
+
+.icon-right::before {
+    content: "→";
+}
+
+/* 时间图标 */
+.icon-time::before {
+    content: "🕐";
+}
+
+.icon-calendar::before {
+    content: "📅";
+}
+
+.icon-clock::before {
+    content: "⏰";
+}
+
+/* 文件图标 */
+.icon-file::before {
+    content: "📄";
+}
+
+.icon-folder::before {
+    content: "📁";
+}
+
+.icon-download::before {
+    content: "⬇";
+}
+
+.icon-upload::before {
+    content: "⬆";
+}
+
+/* 搜索图标 */
+.icon-search::before {
+    content: "🔍";
+}
+
+.icon-filter::before {
+    content: "🔧";
+}
+
+.icon-sort::before {
+    content: "↕";
+}
+
+/* 其他常用图标 */
+.icon-home::before {
+    content: "🏠";
+}
+
+.icon-settings::before {
+    content: "⚙";
+}
+
+.icon-help::before {
+    content: "❓";
+}
+
+.icon-close::before {
+    content: "✕";
+}
+
+.icon-loading::before {
+    content: "⏳";
+}
+
+.icon-menu::before {
+    content: "☰";
+}
+
+.icon-check::before {
+    content: "✓";
+}
+
+.icon-plus::before {
+    content: "+";
+}
+
+.icon-minus::before {
+    content: "-";
+}
+
+/* 图标大小变体 */
+.icon-sm {
+    font-size: 0.875em;
+}
+
+.icon-lg {
+    font-size: 1.25em;
+}
+
+.icon-xl {
+    font-size: 1.5em;
+}
+
+/* 图标颜色变体 */
+.icon-primary {
+    color: #1890ff;
+}
+
+.icon-success {
+    color: #52c41a;
+}
+
+.icon-warning {
+    color: #faad14;
+}
+
+.icon-error {
+    color: #ff4d4f;
+}
+
+.icon-info {
+    color: #1890ff;
+}
+
+/* 图标动画 */
+.icon-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.icon-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* 响应式图标 */
+@media (max-width: 768px) {
+    .icon {
+        font-size: 0.9em;
+    }
+    
+    .icon-lg {
+        font-size: 1.1em;
+    }
+    
+    .icon-xl {
+        font-size: 1.3em;
+    }
+} 

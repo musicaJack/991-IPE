@@ -1,0 +1,99 @@
+<!-- 风险驾驶舱 -->
+<section class="dashboard-section" id="dashboardSection">
+    <div class="section-header" style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="font-size: 24px; font-weight: 600; color: #262626; margin: 0;">
+            <i class="icon-dashboard" style="margin-right: 8px; color: #1890ff;"></i>
+            风险驾驶舱
+        </h2>
+        <button class="btn btn-primary" id="refreshBtn" style="background: #1890ff; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+            <i class="icon-refresh" style="font-size: 16px;"></i>
+            刷新数据
+        </button>
+    </div>
+
+    <!-- 指标卡片 -->
+    <div class="kpi-container">
+        <div class="kpi-card kpi-high">
+            <div class="kpi-icon">
+                <i class="icon-warning" style="color: #ff4d4f; font-size: 24px;"></i>
+            </div>
+            <div class="kpi-content">
+                <h3>高风险事件</h3>
+                <div class="kpi-value" id="highRiskCount">8</div>
+                <div class="kpi-desc">24小时内发生</div>
+            </div>
+        </div>
+        <div class="kpi-card kpi-medium">
+            <div class="kpi-icon">
+                <i class="icon-alert" style="color: #faad14; font-size: 24px;"></i>
+            </div>
+            <div class="kpi-content">
+                <h3>中风险事件</h3>
+                <div class="kpi-value" id="mediumRiskCount">15</div>
+                <div class="kpi-desc">24小时内发生</div>
+            </div>
+        </div>
+        <div class="kpi-card kpi-low">
+            <div class="kpi-icon">
+                <i class="icon-info" style="color: #52c41a; font-size: 24px;"></i>
+            </div>
+            <div class="kpi-content">
+                <h3>低风险事件</h3>
+                <div class="kpi-value" id="lowRiskCount">23</div>
+                <div class="kpi-desc">24小时内发生</div>
+            </div>
+        </div>
+        <div class="kpi-card kpi-trend">
+            <div class="kpi-icon">
+                <i class="icon-bar-chart" style="color: #1890ff; font-size: 24px;"></i>
+            </div>
+            <div class="kpi-content">
+                <h3>事件趋势</h3>
+                <div class="kpi-value" id="totalEvents">+12%</div>
+                <div class="kpi-desc">较昨日增长</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图表区域 -->
+    <div class="chart-container">
+        <!-- 环形图 -->
+        <div class="chart-item">
+            <h3>风险等级分布</h3>
+            <div class="donut-chart" style="position: relative; width: 200px; height: 200px; margin: 0 auto;">
+                <svg width="200" height="200" viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="#f0f0f0" stroke-width="16"/>
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="#ff4d4f" stroke-width="16" stroke-dasharray="40 126" class="progress high" transform="rotate(-90 100 100)"/>
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="#faad14" stroke-width="16" stroke-dasharray="60 106" class="progress medium" transform="rotate(-90 100 100)"/>
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="#52c41a" stroke-width="16" stroke-dasharray="80 86" class="progress low" transform="rotate(-90 100 100)"/>
+                </svg>
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                    <div id="donutValue" style="font-size: 24px; font-weight: 700; color: #262626;">46</div>
+                    <div class="donut-label">总事件</div>
+                </div>
+            </div>
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <div class="legend-color high"></div>
+                    <span>高风险</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color medium"></div>
+                    <span>中风险</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color low"></div>
+                    <span>低风险</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 趋势图 -->
+        <div class="chart-item">
+            <h3>7天风险趋势</h3>
+            <div class="line-chart">
+                <canvas id="trendCanvas" width="400" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</section> 

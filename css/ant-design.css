@@ -19,7 +19,7 @@
     padding: 12px 24px;
     cursor: pointer;
     font-size: 14px;
-    color: #8c8c8c;
+    color: #666666;
     border-bottom: 2px solid transparent;
     transition: all 0.3s ease;
     position: relative;
@@ -188,12 +188,12 @@
 }
 
 .btn-cancel {
-    background: #8c8c8c;
+    background: #666666;
     color: white;
 }
 
 .btn-cancel:hover {
-    background: #bfbfbf;
+    background: #999999;
 }
 
 /* ===== 空表格状态 ===== */
